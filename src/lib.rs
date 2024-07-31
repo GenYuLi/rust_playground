@@ -1,8 +1,9 @@
 pub mod garden;
 pub mod fountain;
+pub mod practice_syntax;
 
 mod meat {
-    mod steak {
+    pub mod steak {
         pub struct Steak {}
     }
 }
@@ -14,5 +15,5 @@ use fountain::water::Music;
 
 pub fn eat() {
     let steak = meat::steak::Steak {};
-    let meat = crate::meat::Steak {};
+    let meat = crate::meat::steak::Steak {};
 }
