@@ -3,12 +3,13 @@
 
 use rust_playground::garden::vegetable::Asparagus;
 use rust_playground::fountain::water::Music;
-use rust_playground::eat;
-use rust_playground::practice_syntax::loop_test;
+use rust_playground::restaurant::eat;
 
 fn main() {
-    let plant = Asparagus {};
-    loop_test::loop_test();
+    // you can declare a variable without assigning a value
+    let plant: Asparagus;
+    // and then assign a value later
+    plant = Asparagus {};
     println!("I'm growing a {:?}! There is some {:?}.", plant, Music {});
     eat();
 }

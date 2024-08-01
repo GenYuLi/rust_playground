@@ -3,4 +3,9 @@ name = "rust_playground"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "practice_syntax"
+path = "src/practice_syntax/main.rs"
+
 [dependencies]
+regex = "1.5.4"
