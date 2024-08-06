@@ -1,13 +1,8 @@
-
-mod meat {
-    pub mod steak {
-        pub struct Steak {}
-    }
-}
-
 fn deliver_order() {}
 
 mod back_of_house {
+    use super::deliver_order;
+
     pub struct Breakfast {
         pub toast: String,
         seasonal_fruit: String,
@@ -32,10 +27,26 @@ mod back_of_house {
     fn fix_incorrect_order() {
         cook_order();
         super::deliver_order();
+        deliver_order();
     }
 
     fn cook_order() {}
 }
+
+pub use back_of_house::Appetizer;
+mod meat {
+    use super::back_of_house;
+
+    pub mod steak {
+        pub struct Steak {}
+    }
+    // use crate::restaurant::back_of_house::Appetizer; you can use this instead of pub use back_of_house::Appetizer;
+    // fn cook() -> Appetizer { // error[E0433]: failed to resolve. Use of undeclared type or module `Appetizer`
+    fn cook() -> super::Appetizer {
+        super::Appetizer::Soup
+    }
+}
+
 
 pub fn eat_at_restaurant() {
     /*let mut meal = back_of_house::Breakfast{
