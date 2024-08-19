@@ -1,4 +1,21 @@
 
+
+use std::collections::HashMap;
+pub fn minimum_pushes(word: String) -> i32 {
+    let mut arr = [0; 26];
+    word.chars().for_each(|c| {
+        arr[(c as u8 - 'a' as u8) as usize] += 1;
+    });
+    arr.sort_unstable_by(|a, b| b.cmp(a));
+    let length = arr.len();
+    let mut ans = 0;
+    for i in 0..length {
+        let multiply = (i as i32 / 8) + 1;
+        ans += arr[i]*multiply;
+    }
+    ans
+}
+
 pub fn range_sum(nums: Vec<i32>, n: i32, left: i32, right: i32) -> i32 {
     let mut new_nums = Vec::new();
     for idx in 0..nums.len() {
@@ -58,5 +75,15 @@ mod tests {
         let right = 5;
         let result = range_sum(nums, n, left, right);
         assert_eq!(result, 13);
+    }
+
+    #[test]
+    fn test_minimum_pushes() {
+        let word = "aaabbbcc".to_string();
+        let result = minimum_pushes(word);
+        assert_eq!(result, 8);
+        let word = "aabbccddeeffgghhiiiiii".to_string();
+        let result = minimum_pushes(word);
+        assert_eq!(result, 24);
     }
 }
