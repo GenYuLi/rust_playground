@@ -1,6 +1,40 @@
+use std::collections::{HashMap, BinaryHeap, LinkedList};
+use std::cmp::Reverse;
+
+struct KthLargest {
+    pub heap: BinaryHeap<Reverse<i32>>,
+    kth: i32,
+}
 
 
-use std::collections::HashMap;
+/** 
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl KthLargest {
+
+    fn new(k: i32, nums: Vec<i32>) -> Self {
+        let mut instance = KthLargest{
+            heap: BinaryHeap::new(),
+            kth: k,
+        };
+        for num in nums {
+            instance.add(num);
+        }
+        instance
+    }
+
+    
+    fn add(&mut self, val: i32) -> i32 {
+        self.heap.push(Reverse(val));
+        if (self.heap.len() as i32) > self.kth {
+            self.heap.pop();
+        }
+        self.heap.peek().unwrap().0
+    }
+}
+
+
 pub fn minimum_pushes(word: String) -> i32 {
     let mut arr = [0; 26];
     word.chars().for_each(|c| {
@@ -33,6 +67,24 @@ pub fn range_sum(nums: Vec<i32>, n: i32, left: i32, right: i32) -> i32 {
         ans += new_nums[i as usize];
     }
     ans
+}
+
+pub fn kth_distinct(arr: Vec<String>, k: i32) -> String {
+    let mut distinct = HashMap::new();
+    let mut times = 0;
+    arr.iter().for_each(|s| {
+        *distinct.entry(s).or_insert(0) += 1;
+    });
+    println!("{:?}", distinct);
+    for s in arr.iter() {
+        if *distinct.get(s).unwrap() == 1 {
+            times += 1;
+            if times == k {
+                return s.to_string();
+            }
+        }
+    }
+    "".to_string()
 }
 
 
@@ -68,6 +120,23 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_kth_largest() {
+        let k = 3;
+        let nums = vec![4, 5, 8, 2];
+        let mut kth_largest = KthLargest::new(k, nums);
+        let result = kth_largest.add(3);
+        assert_eq!(result, 4);
+        let result = kth_largest.add(5);
+        assert_eq!(result, 5);
+        let result = kth_largest.add(10);
+        assert_eq!(result, 5);
+        let result = kth_largest.add(9);
+        assert_eq!(result, 8);
+        let result = kth_largest.add(4);
+        assert_eq!(result, 8);
+    }
+
+    #[test]
     fn test_range_sum() {
         let nums = vec![1, 2, 3, 4];
         let n = 4;
@@ -85,5 +154,13 @@ mod tests {
         let word = "aabbccddeeffgghhiiiiii".to_string();
         let result = minimum_pushes(word);
         assert_eq!(result, 24);
+    }
+
+    #[test]
+    fn test_kth_distinct() {
+        let arr = vec!["a".to_string(), "b".to_string(), "c".to_string(), "a".to_string(), "c".to_string()];
+        let k = 1;
+        let result = kth_distinct(arr, k);
+        assert_eq!(result, "b");
     }
 }

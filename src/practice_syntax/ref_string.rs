@@ -24,6 +24,10 @@ fn first_word(s: &str) -> &str {
 pub fn ref_clear() {
     let mut s = "hello world";
 
+    let mut s1 = String::from("hello ")
+    let mut s2 = String::from("world");
+    let s3 = s1 + &s2;
+
 }
 
 pub fn dangle(str1:&String) -> &String {
