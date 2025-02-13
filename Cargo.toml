@@ -4,9 +4,22 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
+name = "learn_rust"
+path = "src/main.rs"
+
+[[bin]]
 name = "practice_syntax"
 path = "src/practice_syntax/main.rs"
 
+[[bin]]
+name = "learn_tokio"
+path = "src/learn_tokio/async_main.rs"
+
 [dependencies]
+log = "0.4.14"
+simple_logger = "5.0.0"
 regex = "1.5.4"
 rand = "0.8.4"
+tokio = { version = "1.39.3", features = ["full"] }
+anyhow = "1.0.95"
+serde_json = "1.0.138"

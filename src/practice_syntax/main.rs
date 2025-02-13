@@ -1,6 +1,7 @@
 use rust_playground::practice_syntax::loop_test;
 use regex::Regex;
 use rust_playground::practice_syntax::learn_enum;
+use rust_playground::practice_syntax::try_vec;
 
 
 fn main() {
