@@ -1,9 +1,13 @@
 mod socket_ext;
 
+use std::sync::Arc;
+use std::time::Duration;
+
 use socket_ext::test_read_u8_timeout_error_timeout;
 
 use tokio::io::AsyncReadExt;
-use tokio::time;
+use tokio::task;
+use tokio::time::{self, sleep};
 
 use log::Level;
 
@@ -93,9 +97,35 @@ fn main_without_tokio() {
     rt.block_on(do_something_very_Fun());
 }
 
+struct MyStruct {
+    value: i32,
+}
+
+impl MyStruct {
+    async fn do_something(self: &Self) {
+        // 這裡使用的是 Arc 的 clone，並且整個操作不借用非 'static 的資料
+        println!("Value is {}", self.value);
+        sleep(Duration::from_secs(1)).await;
+    }
+
+    fn spawn_task(self: Arc<Self>) {
+        // 將 self 移入 async move block 中，這樣整個 future 是 'static
+        task::spawn(async move {
+            self.do_something().await;
+        });
+    }
+}
+
 // with [tokio::main]
 #[tokio::main]
 async fn main() {
+    let my_struct = MyStruct { value: 42 };
+    tokio::spawn({
+        async move {
+            my_struct.do_something().await;
+        }
+    });
+
     let err = test_read_u8_timeout_error_timeout().await;
     dbg!(&err);
     // take err as a result, and print it
