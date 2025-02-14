@@ -59,6 +59,25 @@ pub(crate) trait SocketExt: AsyncReadExt + AsyncWriteExt + Unpin {
             .map_err(|_| io::Error::new(io::ErrorKind::TimedOut, "test"))?
     }
 
+    async fn read_with_timeout<'s, T, F, Fut>(
+        &'s mut self,
+        duration: Duration,
+        op: F,
+        err_msg: &'static str,
+    ) -> Result<T, io::Error>
+    where
+        F: FnOnce(&'s mut Self) -> Fut,
+        Fut: Future<Output = io::Result<T>> + 's,
+    {
+        timeout(duration, op(self))
+            .await
+            .map_err(|_| io::Error::new(io::ErrorKind::TimedOut, err_msg))?
+    }
+    async fn try_read_timeout(&mut self) {
+        self.read_with_timeout(Duration::from_secs(2), |s| s.read_f32(), "fuck")
+            .await;
+    }
+
     // async fn read_u32_(&mut self, duration: time::Duration) {
     //     self.op_with_timeout::<u32, _, _>(|s| s.read_u32()).await;
     // }
@@ -113,4 +132,30 @@ pub(crate) async fn test_read_u8_timeout_error_timeout() -> Result<u8> {
         .await
         .context("Failed to read u8 with timeout")?;
     Ok(len)
+}
+
+#[cfg(test)]
+mod test_socket {
+    use anyhow::{Context, Result};
+    use tokio::io::AsyncReadExt;
+    use tokio::net::tcp;
+    use tokio::net::TcpListener;
+    use tokio::net::TcpStream;
+    use tokio::time::Duration;
+
+    use super::*;
+    #[tokio::test]
+    async fn try_read_it() -> Result<()> {
+        let mut tcp_stream_server = start_dummy_server("127.0.0.1:2345")
+            .await
+            .context("failed to start server")?;
+        // self lifetime problem!
+        // tokio::spawn({
+        //     async move {
+        //         tcp_stream_server.try_read_timeout().await;
+        //     }
+        // });
+        tcp_stream_server.try_read_timeout().await;
+        Ok(())
+    }
 }
