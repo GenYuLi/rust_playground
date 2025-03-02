@@ -12,6 +12,9 @@ fn main() {
     } else if let learn_enum::IpAddrKind::V6(ip) = my_ip {
         println!("{}", ip);
     }
+    let tmp = "".to_string();
+    let tmp2 = "".to_owned();
+    let t = tmp2;
     loop_test::loop_test();
     let re = Regex::new(r"^[A-CEGHJ-PRSTW-Z][A-CEGHJ-NPRSTW-Z]\d{6}[ABCD]$").unwrap();
     let ni_number = "QQ123456C"; // 測試用的例子

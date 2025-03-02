@@ -116,6 +116,24 @@ impl MyStruct {
     }
 }
 
+async fn excample_b() {
+    let s = String::from("hi");
+    // let f = move || async {
+    //    println!("A: {}", s);
+    // };
+}
+
+async fn example_a() -> impl std::future::Future<Output = String> {
+    let s = String::from("hello");
+
+    let f = || async move {
+        println!("B: {}", &s);
+        s
+    };
+
+    f()
+}
+
 // with [tokio::main]
 #[tokio::main]
 async fn main() {
@@ -138,7 +156,9 @@ async fn main() {
     }
     dbg!("done");
     simple_logger::init_with_level(Level::Info).unwrap();
-
+    let example_a = example_a().await;
+    let var_name = example_a.await;
+    println!("{var_name}");
     // tokio::select!{
     // _ = time::sleep(time::Duration::from_secs(1)) => {
     // log::info!("Slept for 1 second");
@@ -147,6 +167,8 @@ async fn main() {
     // log::info!("Slept for 2 seconds");
     // }
     // }
+    let t = async move || async {};
+    let k = move || async move {};
 
     let start = std::time::Instant::now();
     run().await;
